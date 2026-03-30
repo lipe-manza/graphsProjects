@@ -2,7 +2,7 @@
 Luiz Felipe Manzoli Franceschini - 16913300
 Mateus Juares Felipe - 16891602
 Felipe Fabiano
-Juan
+Juan Pablo Tomba - 15638548
 */
 
 
@@ -10,41 +10,47 @@ Juan
 #include <stdbool.h>
 #include <stdlib.h>
 
-typedef struct graph
+typedef struct graph // Definição da struct do grafo
 {
-    int **matrix;
-    int vtNum;
-    int edNum;
+    int **matrix; // matriz de adjacência
+    int vtNum; // numero de vertices
+    int edNum; // numero de arestas
 } Graph;
+
+// Assinatura das funções para criar/deletar a matriz de adjacência
 
 int **createMatrix(int size);
 
 void deleteMatrix(int ***m, int size);
 
-Graph *MyGraph(int size)
+// Função para alocar memória para o tipo "Graph"
+Graph *MyGraph(int size) 
 {
     if (size < 0)
         return NULL;
 
-    Graph *g = malloc(1 * sizeof(Graph));
+    Graph *g = malloc(1 * sizeof(Graph)); // alocação de memória dinâmica
 
     if (g == NULL)
         return g;
 
-    g->matrix = createMatrix(size);
+    // inicializa matriz de adjacência e define número de vértices e arestas
+    g->matrix = createMatrix(size); 
     g->vtNum = size;
     g->edNum = 0;
 
     return g;
 }
 
+// função para criar a matriz de adjacência
 int **createMatrix(int size)
 {
-    int **m = malloc(size * sizeof(int *));
+    int **m = malloc(size * sizeof(int *)); // alocação da matriz tamanho size x size
 
     if (m == NULL)
         return m;
 
+    // inicialização de cada valor da matriz dinamicamente
     for (int i = 0; i < size; i++)
     {
         m[i] = malloc(size * sizeof(int));
@@ -56,19 +62,20 @@ int **createMatrix(int size)
         }
         for (int j = 0; j < size; j++)
         {
-            m[i][j] = -1;
+            m[i][j] = -1; // -1 para arestas não definidas
         }
     }
 
     return m;
 }
 
+// função para remover e apagar grafo
 void remove_graph(Graph **g)
 {
     if (g == NULL || *g == NULL)
         return;
 
-    deleteMatrix(&((*g)->matrix), (*g)->vtNum);
+    deleteMatrix(&((*g)->matrix), (*g)->vtNum); // chamando função auxiliar para apagar matriz
 
     free(*g);
     (*g) = NULL;
@@ -76,6 +83,7 @@ void remove_graph(Graph **g)
     return;
 }
 
+// função auxiliar para deletar matriz de adjacência
 void deleteMatrix(int ***m, int size)
 {
     if (m == NULL || *m == NULL)
@@ -83,7 +91,7 @@ void deleteMatrix(int ***m, int size)
 
     for (int i = 0; i < size; i++)
     {
-        free((*m)[i]);
+        free((*m)[i]); // apagando cada linha e liberando memória
         (*m)[i] = NULL;
     }
 
@@ -91,6 +99,7 @@ void deleteMatrix(int ***m, int size)
     *m = NULL;
 }
 
+// função para adicionar aresta
 void add_edge(Graph *g, int v1, int v2, int w)
 {
     // Verificação para ver se a entrada da função é válida
@@ -105,13 +114,14 @@ void add_edge(Graph *g, int v1, int v2, int w)
 
 int exist_edge(Graph *g, int v1, int v2)
 {
-    // verificação padrão para ver se a entrada é valida
+    // verificação se a entrada é valida
     if (g == NULL || v1 < 1 || v2 < 1 || v1 >= g->edNum || v2 >= g->edNum)
         return 0;
 
-    return (g->matrix[v1 - 1][v2 - 1] != -1) ? 1 : 0;
+    return (g->matrix[v1 - 1][v2 - 1] != -1) ? 1 : 0; 
 }
 
+// função que retorna vizinhos de um vértice
 int *neighbors(Graph *g, int v1)
 {
 
@@ -133,13 +143,15 @@ int *neighbors(Graph *g, int v1)
     return temp;
 }
 
+// função para remover aresta
 int remove_edge(Graph *g, int v1, int v2)
 {
-    if (g->matrix[v1][v2] == -1 || v1 > g->vtNum || v2 > g->vtNum)
+    if (g->matrix[v1][v2] == -1 || v1 > g->vtNum || v2 > g->vtNum) // verificação se aresta existe
     {
         return -1;
     }
 
+    // remoção lógica na matriz
     g->matrix[v1 - 1][v2 - 1] = -1;
     g->matrix[v2 - 1][v1 - 1] = -1;
 
@@ -147,15 +159,16 @@ int remove_edge(Graph *g, int v1, int v2)
     return 1;
 }
 
+// função para imprimir vértices e arestas do grafo
 void print_info(Graph *g)
 {
-    if (!g)
+    if (!g) // verifica se grafo existe
         return;
 
     printf("V = [");
-    for (int i = 0; i < g->vtNum; i++)
+    for (int i = 0; i < g->vtNum; i++) // impressão de vértices
     {
-        printf("%d%s", i + 1, (i == g->vtNum - 1) ? "" : ", ");
+        printf("%d%s", i + 1, (i == g->vtNum - 1) ? "" : ", "); 
     }
     printf("]\n");
 
@@ -178,9 +191,10 @@ void print_info(Graph *g)
     printf("]\n");
 }
 
+// função que retorna o vértice com maior número de vizinhos
 int max_neighbors(Graph *g)
 {
-    if (g == NULL)
+    if (g == NULL) // verifica se grafo é valido
         return -1;
 
     int neighNum;
