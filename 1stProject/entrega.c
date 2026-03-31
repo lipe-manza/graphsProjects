@@ -1,10 +1,9 @@
 /*
 Luiz Felipe Manzoli Franceschini - 16913300
 Mateus Juares Felipe - 16891602
-Felipe Fabiano
+Felipe Fabiano das Chagas - 16811922
 Juan Pablo Tomba - 15638548
 */
-
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -13,8 +12,8 @@ Juan Pablo Tomba - 15638548
 typedef struct graph // Definição da struct do grafo
 {
     int **matrix; // matriz de adjacência
-    int vtNum; // numero de vertices
-    int edNum; // numero de arestas
+    int vtNum;    // numero de vertices
+    int edNum;    // numero de arestas
 } Graph;
 
 // Assinatura das funções para criar/deletar a matriz de adjacência
@@ -24,7 +23,7 @@ int **createMatrix(int size);
 void deleteMatrix(int ***m, int size);
 
 // Função para alocar memória para o tipo "Graph"
-Graph *MyGraph(int size) 
+Graph *MyGraph(int size)
 {
     if (size < 0)
         return NULL;
@@ -35,7 +34,7 @@ Graph *MyGraph(int size)
         return g;
 
     // inicializa matriz de adjacência e define número de vértices e arestas
-    g->matrix = createMatrix(size); 
+    g->matrix = createMatrix(size);
     g->vtNum = size;
     g->edNum = 0;
 
@@ -118,7 +117,7 @@ int exist_edge(Graph *g, int v1, int v2)
     if (g == NULL || v1 < 1 || v2 < 1 || v1 >= g->edNum || v2 >= g->edNum)
         return 0;
 
-    return (g->matrix[v1 - 1][v2 - 1] != -1) ? 1 : 0; 
+    return (g->matrix[v1 - 1][v2 - 1] != -1) ? 1 : 0;
 }
 
 // função que retorna vizinhos de um vértice
@@ -168,7 +167,7 @@ void print_info(Graph *g)
     printf("V = [");
     for (int i = 0; i < g->vtNum; i++) // impressão de vértices
     {
-        printf("%d%s", i + 1, (i == g->vtNum - 1) ? "" : ", "); 
+        printf("%d%s", i + 1, (i == g->vtNum - 1) ? "" : ", ");
     }
     printf("]\n");
 
@@ -197,9 +196,9 @@ int max_neighbors(Graph *g)
     if (g == NULL) // verifica se grafo é valido
         return -1;
 
-    int neighNum;
     int Cmax = 0;
     int max = 0;
+    int Vmax = 0;
 
     for (int i = 0; i < g->vtNum; i++)
     {
@@ -209,17 +208,19 @@ int max_neighbors(Graph *g)
 
             if (g->matrix[i][j] != -1)
             {
-                neighNum++;
+                Cmax++;
             }
         }
-        Cmax = neighNum;
-        if (Cmax > max)
-            max = i;
+        if (Cmax > max){
+            max = Cmax;
+            Vmax = i;
+        }
     }
 
-    return max;
+    return Vmax + 1;
 }
 
+// retorna a matrix de adjacencia do grafo
 int **adjacency_matrix(Graph *g)
 {
     if (g == NULL)
@@ -227,6 +228,7 @@ int **adjacency_matrix(Graph *g)
     return g->matrix;
 }
 
+// retorna o numero de vertices do grafo
 int getVtNum(Graph *g)
 {
     return g->vtNum;
@@ -288,18 +290,20 @@ int main(void)
         case 5:
             m = adjacency_matrix(G);
             printf("Adjacency Matrix:\n");
-            for (int i = 0; i < getVtNum(G) - 1; i++)
+            for (int i = 0; i < getVtNum(G); i++)
             {
                 printf("  "); // Da dois espaços antes de cada linha
-                for (int j = 0; j < getVtNum(G) - 1; j++)
+                for (int j = 0; j < getVtNum(G); j++)
                 {
-                    if (m[i][j] == -1)
-                        printf("0%s", (m[i][j + 1] > 9) ? "  " : "   ");
-                    else
-                        printf("%d%s", m[i][j], (m[i][j + 1] > 9) ? "  " : "   "); // 2 espaços se < 9 e 3 se > 9
+                    printf("%d%s", (m[i][j] == -1) ? 0 : m[i][j], (m[i][j + 1] > 9) ? "  " : "   "); // 2 espaços se < 9 e 3 se > 9
                 }
                 printf("\n");
             }
+            print_status = 0;
+            break;
+        case 6:
+            res = max_neighbors(G);
+            printf("max vertex: %d", res);
             print_status = 0;
             break;
         default:
